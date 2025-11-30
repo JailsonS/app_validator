@@ -11,7 +11,7 @@ SHEET_ID = "1v573sjUIGvvfEBg6vRnTpvXw7ymeAgaIzTIUAryTldo"
 def get_credentials():
 
     creds = service_account.Credentials.from_service_account_file(
-        "gee.json",
+        "service_account.json",
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
 

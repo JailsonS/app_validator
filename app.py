@@ -1,6 +1,8 @@
 import streamlit as st
 import ee
 import geemap.foliumap as geemap
+import os
+import json
 
 from helpers.gee_functions import get_sentinel_2_image
 from helpers.gsheet_functions import write_validation
@@ -12,8 +14,14 @@ st.set_page_config(
 )
 
 # Initialize EE
+
+service_json = os.environ["GEE_SERVICE_ACCOUNT_JSON"]
+
+with open("service_account.json", "w") as f:
+    f.write(service_json)
+
 service_account = 'soy-facili-validator-c7330ac6f@trase-396112.iam.gserviceaccount.com'
-credentials = ee.ServiceAccountCredentials(service_account, 'gee.json')
+credentials = ee.ServiceAccountCredentials(service_account, 'service_account.json')
 ee.Initialize(credentials)
 
 # -------------------------------------------------------------------
