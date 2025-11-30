@@ -7,6 +7,10 @@ import json
 from helpers.gee_functions import get_sentinel_2_image
 from helpers.gsheet_functions import write_validation
 
+import dotenv
+
+dotenv.load_dotenv()
+
 st.set_page_config(
     layout="wide",
     page_title="Soy Facility Validator",
