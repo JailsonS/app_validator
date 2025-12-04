@@ -139,6 +139,11 @@ def show_facility():
     facility = fc.filter(ee.Filter.eq('system:index', fac_id)).first()
     geom = facility.geometry()
 
+    coord = geom.coordinates().getInfo()
+    lon, lat = coord
+    
+    st.write(f"📍 Coord: {lat}, {lon}")
+
     image = get_sentinel_2_image(geom, year=2024).clip(
         geom.buffer(1000).bounds()
     )
@@ -208,7 +213,7 @@ if st.session_state.samples_fc:
 
     st.subheader("Validation")
 
-    choice = st.selectbox("IS IT A STORAGE FACILITY?", ["YES", "NO", "UNCERTAIN"])
+    choice = st.selectbox("IS IT A STORAGE FACILITY?", ["YES", "NO", "MAYBE"])
 
     if st.button("Save"):
         save_validation(choice, user['asset_samples'])
