@@ -123,7 +123,7 @@ def load_samples(asset_id):
     st.session_state.facility_list = ids
     st.session_state.current_index = 0
     st.session_state.start_index = '0'
-    st.session_state.round_number = '1'
+    # st.session_state.round_number = '1'
 
 def set_index():
     st.session_state.current_index = int(st.session_state.start_index)
