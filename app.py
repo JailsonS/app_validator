@@ -141,7 +141,7 @@ def show_facility():
 
     coord = geom.coordinates().getInfo()
     lon, lat = coord
-    
+
     st.write(f"📍 Coord: {lat}, {lon}")
 
     image = get_sentinel_2_image(geom, year=2024).clip(
@@ -161,9 +161,19 @@ def show_facility():
         'Sentinel-2 RGB'
     )
 
-    Map.split_map(left_layer, 'SATELLITE')
+    # Right: Google basemap
+    # Satellite: Google Maps
+    google_satellite_url = "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+    Map.add_tile_layer(google_satellite_url, name="Google Satellite", attribution="Google")
+
+    # Split map
+    Map.split_map(left_layer)
+
+    # Add facilities layer
     Map.addLayer(fc, {}, 'Facilities')
     Map.centerObject(facility, 16)
+
+    # Display in Streamlit
     Map.to_streamlit(height=520)
 
 # -------------------------------------------------------------------
