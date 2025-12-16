@@ -60,7 +60,7 @@ st.sidebar.markdown("### Navigation")
 # -------------------------------------------------------------------
 
 LIST_USERS = [
-    {'user': f'User {i}', 
+    {'user': f'User {i}',
      'asset_samples': f'projects/trase-396112/assets/brazil/logistics/silos/silo_map_v3/validation/silos_added_2024_v4_{i}'
     }
     for i in range(1, 11)
@@ -142,7 +142,8 @@ def show_facility():
     coord = geom.coordinates().getInfo()
     lon, lat = coord
 
-    st.write(f"📍 Coord: {lat}, {lon}")
+    maps_url = f"https://www.google.com/maps?q={lat},{lon}"
+    st.write(f"📍 [Coord: {lat}, {lon}]({maps_url})")
 
     image = get_sentinel_2_image(geom, year=2024).clip(
         geom.buffer(1000).bounds()
@@ -196,7 +197,7 @@ user = st.selectbox("Select User", LIST_USERS, format_func=lambda u: u['user'])
 st.text_input(
     label='Which round of validation?',
     placeholder='e.g. 1',
-    key='round', 
+    key='round',
     on_change=set_round
 )
 
@@ -211,7 +212,7 @@ if st.button("Load samples", type="primary"):
 st.text_input(
     label='Start at index',
     placeholder='e.g. 0',
-    key='start_index', 
+    key='start_index',
     on_change=set_index
 )
 
