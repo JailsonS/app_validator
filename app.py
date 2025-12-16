@@ -107,6 +107,9 @@ def save_validation(choice, asset_samples):
     write_validation(fac_index, choice, user_name, round_number, asset_samples)
     st.success(f"Saved: {fac_index} → {choice}")
 
+    # Automatically move to next index after saving
+    next_index()
+
 def next_index():
     if st.session_state.current_index < len(st.session_state.facility_list) - 1:
         st.session_state.current_index += 1
@@ -226,7 +229,7 @@ if st.session_state.samples_fc:
 
     choice = st.selectbox("IS IT A STORAGE FACILITY?", ["YES", "NO", "MAYBE"])
 
-    if st.button("Save"):
+    if st.button("Save and move to next index"):
         save_validation(choice, user['asset_samples'])
 
     c1, c2, c3 = st.columns([1,1,1])
