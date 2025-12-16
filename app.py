@@ -17,21 +17,23 @@ st.set_page_config(
 
 service_json = {
   "type": "service_account",
-  "project_id": "trase-396112",
-  "private_key_id": "84c6b81f60cf11d77b81ad45714c4d18301828b1",
+  "project_id":  st.secrets["project_id"],
+  "private_key_id": st.secrets["private_key_id"],
   "private_key": st.secrets["pkey"],
-  "client_email": "gee-app@trase-396112.iam.gserviceaccount.com",
+  "client_email": st.secrets["client_email"],
   "client_id": "117918267299200083789",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
   "token_uri": "https://oauth2.googleapis.com/token",
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gee-app%40trase-396112.iam.gserviceaccount.com",
+  "client_x509_cert_url": st.secrets["client_x509_cert_url"],
   "universe_domain": "googleapis.com"
 }
 
 cred_path = "service_account.json"
-with open(cred_path, "w") as f:
-    json.dump(service_json, f)  # usa json.dump para converter o dicionário em string JSON
+
+if not os.path.exists(cred_path):
+    with open(cred_path, "w") as f:
+        json.dump(service_json, f)
 
 # Inicializa o Earth Engine
 service_account_email = service_json['client_email']
