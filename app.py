@@ -60,7 +60,7 @@ st.sidebar.markdown("### Navigation")
 # -------------------------------------------------------------------
 
 LIST_USERS = [
-    {'user': f'User {i}', 
+    {'user': f'User {i}',
      'asset_samples': f'projects/trase-396112/assets/brazil/logistics/silos/silo_map_v3/validation/silos_added_2024_v4_{i}'
     }
     for i in range(1, 11)
@@ -99,13 +99,16 @@ def reset_state():
     st.session_state.samples_fc = None
     st.session_state.current_user_asset = None
 
-def save_validation(choice, asset_samples):
+def save_validation(choice, asset_samples, observation=""):
     fac_index = st.session_state.current_index
     user_name = st.session_state.previous_user
     round_number = st.session_state.round_number
 
-    write_validation(fac_index, choice, user_name, round_number, asset_samples)
+    write_validation(fac_index, choice, user_name, round_number, asset_samples, observation)
     st.success(f"Saved: {fac_index} → {choice}")
+
+    # Automatically move to next index after saving
+    next_index()
 
 def next_index():
     if st.session_state.current_index < len(st.session_state.facility_list) - 1:
@@ -142,7 +145,8 @@ def show_facility():
     coord = geom.coordinates().getInfo()
     lon, lat = coord
 
-    st.write(f"📍 Coord: {lat}, {lon}")
+    maps_url = f"https://www.google.com/maps?q={lat},{lon}"
+    st.write(f"📍 [Coord: {lat}, {lon}]({maps_url})")
 
     image = get_sentinel_2_image(geom, year=2024).clip(
         geom.buffer(1000).bounds()
@@ -196,7 +200,7 @@ user = st.selectbox("Select User", LIST_USERS, format_func=lambda u: u['user'])
 st.text_input(
     label='Which round of validation?',
     placeholder='e.g. 1',
-    key='round', 
+    key='round',
     on_change=set_round
 )
 
@@ -211,7 +215,7 @@ if st.button("Load samples", type="primary"):
 st.text_input(
     label='Start at index',
     placeholder='e.g. 0',
-    key='start_index', 
+    key='start_index',
     on_change=set_index
 )
 
@@ -224,9 +228,11 @@ if st.session_state.samples_fc:
     st.subheader("Validation")
 
     choice = st.selectbox("IS IT A STORAGE FACILITY?", ["YES", "NO", "MAYBE"])
+    
+    observation = st.text_input("Observation (optional)", key="obs_input", placeholder="Add any notes here...")
 
-    if st.button("Save"):
-        save_validation(choice, user['asset_samples'])
+    if st.button("Save and move to next index"):
+        save_validation(choice, user['asset_samples'], observation)
 
     c1, c2, c3 = st.columns([1,1,1])
 
