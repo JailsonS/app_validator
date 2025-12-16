@@ -18,7 +18,7 @@ def get_credentials():
     return creds
 
 
-def write_validation(facility_id: str, choice: str, user: str, round: int|str, asset_samples:str):
+def write_validation(facility_id: str, choice: str, user: str, round: int|str, asset_samples:str, observation: str = ""):
     """
     Writes a new validation row into Google Sheets.
     """
@@ -35,14 +35,15 @@ def write_validation(facility_id: str, choice: str, user: str, round: int|str, a
             asset_samples,
             facility_id,
             choice,
-            round
+            round,
+            observation
         ]
 
         body = {"values": [row]}
 
         sheet.values().append(
             spreadsheetId=SHEET_ID,
-            range=f"Sheet1!A:D",
+            range=f"Sheet1!A:G",
             valueInputOption="RAW",
             insertDataOption="INSERT_ROWS",
             body=body

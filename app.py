@@ -99,12 +99,12 @@ def reset_state():
     st.session_state.samples_fc = None
     st.session_state.current_user_asset = None
 
-def save_validation(choice, asset_samples):
+def save_validation(choice, asset_samples, observation=""):
     fac_index = st.session_state.current_index
     user_name = st.session_state.previous_user
     round_number = st.session_state.round_number
 
-    write_validation(fac_index, choice, user_name, round_number, asset_samples)
+    write_validation(fac_index, choice, user_name, round_number, asset_samples, observation)
     st.success(f"Saved: {fac_index} → {choice}")
 
     # Automatically move to next index after saving
@@ -228,9 +228,11 @@ if st.session_state.samples_fc:
     st.subheader("Validation")
 
     choice = st.selectbox("IS IT A STORAGE FACILITY?", ["YES", "NO", "MAYBE"])
+    
+    observation = st.text_input("Observation (optional)", key="obs_input", placeholder="Add any notes here...")
 
     if st.button("Save and move to next index"):
-        save_validation(choice, user['asset_samples'])
+        save_validation(choice, user['asset_samples'], observation)
 
     c1, c2, c3 = st.columns([1,1,1])
 
