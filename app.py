@@ -65,7 +65,7 @@ LIST_USERS = [
     {'user': f'User {i}',
      'asset_samples': f'projects/trase-396112/assets/brazil/logistics/silos/silo_map_v3/validation/silos_added_2024_v4_{i}'
     }
-    for i in range(1, 11)
+    for i in range(0, 10)
 ]
 
 # -------------------------------------------------------------------
