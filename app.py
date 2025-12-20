@@ -100,6 +100,7 @@ def reset_state():
     st.session_state.facility_list = []
     st.session_state.samples_fc = None
     st.session_state.current_user_asset = None
+    st.session_state.obs_input = ''
 
 def save_validation(choice, asset_samples, observation=""):
     fac_index = st.session_state.current_index
