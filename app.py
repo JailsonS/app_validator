@@ -116,18 +116,17 @@ def save_validation(choice, asset_samples, observation=""):
     # Automatically move to next index after saving
     next_index()
 
-    # Reset the observation field in session state
-    st.session_state.obs_input = ''
-
 def next_index():
     if st.session_state.current_index < len(st.session_state.facility_list) - 1:
         st.session_state.current_index += 1
         st.session_state.obs_input = ''
+        st.session_state.obs_field = ''
 
 def prev_index():
     if st.session_state.current_index > 0:
         st.session_state.current_index -= 1
         st.session_state.obs_input = ''
+        st.session_state.obs_field = ''
 
 def load_samples(asset_id):
     fc = ee.FeatureCollection(asset_id)
@@ -138,6 +137,8 @@ def load_samples(asset_id):
     st.session_state.current_index = 0
     st.session_state.start_index = '0'
     # st.session_state.round_number = '1'
+    st.session_state.obs_input = ''
+    st.session_state.obs_field = ''
 
 def set_index():
     st.session_state.current_index = int(st.session_state.start_index)
@@ -250,13 +251,13 @@ if st.session_state.samples_fc:
         placeholder="Add any notes here...",
         on_change=set_obs,
         value=st.session_state.obs_input
-
     )
 
     observation = st.session_state.obs_input
 
     if st.button("Save and move to next index"):
         save_validation(choice, user['asset_samples'], observation)
+        st.session_state.obs_field = ''
 
     c1, c2, c3 = st.columns([1,1,1])
 
