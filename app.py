@@ -151,14 +151,15 @@ def set_round():
 def set_obs():
     st.session_state.obs_input = st.session_state.obs_field
 
-def handle_save(choice, asset_samples, observation):
-    # Primeiro, salva os dados
+def handle_save(choice, asset_samples):
+    # Retrieve the observation from the state before clearing it
+    observation = st.session_state.obs_field
+    
+    # Save the data
     save_validation(choice, asset_samples, observation)
     
-    # Depois, limpa as chaves no session_state
-    # Nota: Essas chaves devem ser as mesmas usadas no parâmetro 'key' dos widgets
-    st.session_state.obs_input = ''
-    st.session_state.obs_field = ''
+    # Clear the text area by resetting its key in session_state
+    st.session_state.obs_field = ""
 
 
 def show_facility():
@@ -279,7 +280,7 @@ if st.session_state.samples_fc:
     if st.button(
         "Save and move to next index", 
         on_click=handle_save, 
-        args=(choice, user['asset_samples'], observation)
+        args=(choice, user['asset_samples'])
     ):
         st.success("Validado com sucesso!")
 
