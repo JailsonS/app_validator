@@ -257,7 +257,6 @@ if st.session_state.samples_fc:
 
     if st.button("Save and move to next index"):
         save_validation(choice, user['asset_samples'], observation)
-        st.session_state.obs_field = ''
 
     c1, c2, c3 = st.columns([1,1,1])
 
