@@ -113,6 +113,8 @@ def save_validation(choice, asset_samples, observation=""):
     # Automatically move to next index after saving
     next_index()
 
+    st.session_state.obs_input = ''
+
 def next_index():
     if st.session_state.current_index < len(st.session_state.facility_list) - 1:
         st.session_state.current_index += 1
