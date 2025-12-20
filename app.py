@@ -90,6 +90,9 @@ if 'current_user_asset' not in st.session_state:
 if 'previous_user' not in st.session_state:
     st.session_state.previous_user = None
 
+if 'obs_input' not in st.session_state:
+    st.session_state.obs_input = ''
+
 # -------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------
