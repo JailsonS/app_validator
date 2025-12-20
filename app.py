@@ -277,12 +277,11 @@ if st.session_state.samples_fc:
     #     st.session_state.obs_input = ''
     #     st.session_state.obs_field = ''
 
-    if st.button(
+    st.button(
         "Save and move to next index", 
         on_click=handle_save, 
         args=(choice, user['asset_samples'])
-    ):
-        st.success("Validado com sucesso!")
+    )
 
 
     c1, c2, c3 = st.columns([1,1,1])
