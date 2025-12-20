@@ -116,6 +116,7 @@ def save_validation(choice, asset_samples, observation=""):
     # Automatically move to next index after saving
     next_index()
 
+    # Reset the observation field in session state
     st.session_state.obs_input = ''
 
 def next_index():
@@ -237,7 +238,7 @@ if st.session_state.samples_fc:
 
     choice = st.selectbox("IS IT A STORAGE FACILITY?", ["YES", "NO", "MAYBE"])
     
-    observation = st.text_input("Observation (optional)", key="obs_input", placeholder="Add any notes here...")
+    observation = st.text_input("Observation (optional)", key="obs_field", placeholder="Add any notes here...")
 
     if st.button("Save and move to next index"):
         save_validation(choice, user['asset_samples'], observation)
