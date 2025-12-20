@@ -114,7 +114,6 @@ def save_validation(choice, asset_samples, observation=""):
     round_number = st.session_state.round_number
 
     write_validation(fac_index, choice, user_name, round_number, asset_samples, observation)
-    st.success(f"Saved: {fac_index} → {choice}")
 
     # Automatically move to next index after saving
     next_index()
@@ -271,17 +270,12 @@ if st.session_state.samples_fc:
         placeholder="Add any notes here..." 
     )
 
-
-    # if st.button("Save and move to next index"):
-    #     save_validation(choice, user['asset_samples'], observation)
-    #     st.session_state.obs_input = ''
-    #     st.session_state.obs_field = ''
-
-    st.button(
+    if st.button(
         "Save and move to next index", 
         on_click=handle_save, 
         args=(choice, user['asset_samples'])
-    )
+    ):
+        st.success(f"Saved: {int(st.session_state.current_index) - 1} → {choice}")
 
 
     c1, c2, c3 = st.columns([1,1,1])
