@@ -246,7 +246,9 @@ if st.session_state.samples_fc:
         "Observation (optional)", 
         key="obs_field", 
         placeholder="Add any notes here...",
-        on_change=set_obs
+        on_change=set_obs,
+        value=st.session_state.obs_input
+
     )
 
     observation = st.session_state.obs_input
