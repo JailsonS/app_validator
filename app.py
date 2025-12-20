@@ -238,10 +238,11 @@ if st.session_state.samples_fc:
 
     choice = st.selectbox("IS IT A STORAGE FACILITY?", ["YES", "NO", "MAYBE"])
     
-    observation = st.text_input("Observation (optional)", key="obs_field", placeholder="Add any notes here...")
+    observation = st.text_input("Observation (optional)", key="obs_input", placeholder="Add any notes here...")
 
     if st.button("Save and move to next index"):
         save_validation(choice, user['asset_samples'], observation)
+        st.rerun()
 
     c1, c2, c3 = st.columns([1,1,1])
 
