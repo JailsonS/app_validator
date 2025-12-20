@@ -93,6 +93,9 @@ if 'previous_user' not in st.session_state:
 if 'obs_input' not in st.session_state:
     st.session_state.obs_input = ''
 
+if 'obs_field' not in st.session_state:
+    st.session_state.obs_field = ''
+
 # -------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------
@@ -119,8 +122,8 @@ def save_validation(choice, asset_samples, observation=""):
 def next_index():
     if st.session_state.current_index < len(st.session_state.facility_list) - 1:
         st.session_state.current_index += 1
-        st.session_state.obs_input = ''
-        st.session_state.obs_field = ''
+        #st.session_state.obs_input = ''
+        #st.session_state.obs_field = ''
 
 def prev_index():
     if st.session_state.current_index > 0:
@@ -137,7 +140,6 @@ def load_samples(asset_id):
     st.session_state.current_index = 0
     st.session_state.start_index = '0'
     # st.session_state.round_number = '1'
-    st.session_state.obs_input = ''
     st.session_state.obs_field = ''
 
 def set_index():
@@ -148,6 +150,15 @@ def set_round():
 
 def set_obs():
     st.session_state.obs_input = st.session_state.obs_field
+
+def handle_save(choice, asset_samples, observation):
+    # Primeiro, salva os dados
+    save_validation(choice, asset_samples, observation)
+    
+    # Depois, limpa as chaves no session_state
+    # Nota: Essas chaves devem ser as mesmas usadas no parâmetro 'key' dos widgets
+    st.session_state.obs_input = ''
+    st.session_state.obs_field = ''
 
 
 def show_facility():
@@ -245,18 +256,33 @@ if st.session_state.samples_fc:
 
     choice = st.selectbox("IS IT A STORAGE FACILITY?", ["YES", "NO", "MAYBE"])
     
-    st.text_input(
+    # st.text_input(
+    #     "Observation (optional)", 
+    #     key="obs_field", 
+    #     placeholder="Add any notes here...",
+    #     on_change=set_obs,
+    #     value=st.session_state.obs_input
+    # )
+
+    observation = st.text_area(
         "Observation (optional)", 
-        key="obs_field", 
-        placeholder="Add any notes here...",
-        on_change=set_obs,
-        value=st.session_state.obs_input
+        key="obs_field",
+        placeholder="Add any notes here..." 
     )
 
-    observation = st.session_state.obs_input
 
-    if st.button("Save and move to next index"):
-        save_validation(choice, user['asset_samples'], observation)
+    # if st.button("Save and move to next index"):
+    #     save_validation(choice, user['asset_samples'], observation)
+    #     st.session_state.obs_input = ''
+    #     st.session_state.obs_field = ''
+
+    if st.button(
+        "Save and move to next index", 
+        on_click=handle_save, 
+        args=(choice, user['asset_samples'], observation)
+    ):
+        st.success("Validado com sucesso!")
+
 
     c1, c2, c3 = st.columns([1,1,1])
 
