@@ -143,6 +143,10 @@ def set_index():
 def set_round():
     st.session_state.round_number = int(st.session_state.round)
 
+def set_obs():
+    st.session_state.obs_input = st.session_state.obs_field
+
+
 def show_facility():
     fc = st.session_state.samples_fc
     idx = st.session_state.current_index
@@ -238,11 +242,17 @@ if st.session_state.samples_fc:
 
     choice = st.selectbox("IS IT A STORAGE FACILITY?", ["YES", "NO", "MAYBE"])
     
-    observation = st.text_input("Observation (optional)", key="obs_input", placeholder="Add any notes here...")
+    st.text_input(
+        "Observation (optional)", 
+        key="obs_field", 
+        placeholder="Add any notes here...",
+        on_change=set_obs
+    )
+
+    observation = st.session_state.obs_input
 
     if st.button("Save and move to next index"):
         save_validation(choice, user['asset_samples'], observation)
-        st.rerun()
 
     c1, c2, c3 = st.columns([1,1,1])
 
