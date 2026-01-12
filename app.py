@@ -4,7 +4,7 @@ import geemap.foliumap as geemap
 import os
 import json
 import streamlit.components.v1 as components
-from helpers.gee_functions import *
+from helpers.gee_functions import get_mapbiomas_image, get_sentinel_2_image
 from helpers.gsheet_functions import write_validation
 
 st.set_page_config(
