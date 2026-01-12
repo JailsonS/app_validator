@@ -3,8 +3,8 @@ import ee
 import geemap.foliumap as geemap
 import os
 import json
-
-from helpers.gee_functions import get_sentinel_2_image
+import streamlit.components.v1 as components
+from helpers.gee_functions import *
 from helpers.gsheet_functions import write_validation
 
 st.set_page_config(
@@ -60,6 +60,79 @@ st.sidebar.markdown("### Navigation")
 # -------------------------------------------------------------------
 # Config
 # -------------------------------------------------------------------
+
+MAPBIOMAS_PALETTE = [
+    "#ffffff",
+    "#32a65e",
+    "#32a65e",
+    "#1f8d49",
+    "#7dc975",
+    "#04381d",
+    "#026975",
+    "#000000",
+    "#000000",
+    "#7a6c00",
+    "#ad975a",
+    "#519799",
+    "#d6bc74",
+    "#d89f5c",
+    "#FFFFB2",
+    "#edde8e",
+    "#000000",
+    "#000000",
+    "#f5b3c8",
+    "#C27BA0",
+    "#db7093",
+    "#ffefc3",
+    "#db4d4f",
+    "#ffa07a",
+    "#d4271e",
+    "#db4d4f",
+    "#0000FF",
+    "#000000",
+    "#000000",
+    "#ffaa5f",
+    "#9c0027",
+    "#091077",
+    "#fc8114",
+    "#2532e4",
+    "#93dfe6",
+    "#9065d0",
+    "#d082de",
+    "#000000",
+    "#000000",
+    "#f5b3c8",
+    "#c71585",
+    "#f54ca9",
+    "#cca0d4",
+    "#dbd26b",
+    "#807a40",
+    "#e04cfa",
+    "#d68fe2",
+    "#9932cc",
+    "#e6ccff",
+    "#02d659",
+    "#ad5100",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#CC66FF",
+    "#FF6666",
+    "#006400",
+    "#8d9e8b",
+    "#f5d5d5",
+    "#ff69b4",
+    "#ebf8b5",
+    "#000000",
+    "#000000",
+    "#91ff36",
+    "#7dc975",
+    "#e97a7a",
+    "#0fffe3"
+]
 
 LIST_USERS = [
     {'user': f'User {i}',
@@ -179,7 +252,10 @@ def show_facility():
         geom.buffer(1000).bounds()
     )
 
-    Map = geemap.Map()
+    mapbiomas_lulc = get_mapbiomas_image(year=2024)
+
+    Map = geemap.Map(basemap=None, add_google_map=False)
+    
 
     left_layer = geemap.ee_tile_layer(
         image,
@@ -195,17 +271,23 @@ def show_facility():
     # Right: Google basemap
     # Satellite: Google Maps
     google_satellite_url = "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-    Map.add_tile_layer(google_satellite_url, name="Google Satellite", attribution="Google")
+    Map.add_tile_layer(google_satellite_url, name="Google Satellite", attribution="Google", base_layer=True)
 
     # Split map
     Map.split_map(left_layer)
+
+    # Add LULC layer
+    Map.addLayer(mapbiomas_lulc, {
+        'min': 0, 'max': 69,
+        'palette': MAPBIOMAS_PALETTE
+    }, 'LULC - 2024', True, 0.5)
 
     # Add facilities layer
     Map.addLayer(fc, {}, 'Facilities')
     Map.centerObject(facility, 16)
 
     # Display in Streamlit
-    Map.to_streamlit(height=520)
+    Map.to_streamlit(height=720)
 
 # -------------------------------------------------------------------
 # Main UI
@@ -288,5 +370,70 @@ if st.session_state.samples_fc:
 
     with c3:
         st.button("Next ➡", on_click=next_index)
-
+    
     show_facility()
+
+    # Add the legend in a horizontal format
+    st.markdown("---")
+
+    # Custom CSS for the legend layout
+    legend_html = """
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: start; background-color: #f0f2f6; padding: 15px; border-radius: 10px;">
+    """
+    legend_items = [
+        [MAPBIOMAS_PALETTE[0], 'No Data'],
+        [MAPBIOMAS_PALETTE[3], 'Forest Formation'],
+        [MAPBIOMAS_PALETTE[4], 'Savanna Formation'],
+        [MAPBIOMAS_PALETTE[5], 'Mangrove'],
+        [MAPBIOMAS_PALETTE[49], 'Wooded Restinga'],
+        [MAPBIOMAS_PALETTE[11], 'Natural Wetland'],
+        [MAPBIOMAS_PALETTE[12], 'Grassland'],
+        [MAPBIOMAS_PALETTE[32], 'Salt Flat'],
+        [MAPBIOMAS_PALETTE[29], 'Rocky Outcrop'],
+        [MAPBIOMAS_PALETTE[50], 'Herbaceous Restinga'],
+        [MAPBIOMAS_PALETTE[13], 'Other non-Forest Formations'],
+        [MAPBIOMAS_PALETTE[18], 'Agriculture'],
+        [MAPBIOMAS_PALETTE[39], 'Soybean'],
+        [MAPBIOMAS_PALETTE[20], 'Sugar Cane'],
+        [MAPBIOMAS_PALETTE[40], 'Rice'],
+        [MAPBIOMAS_PALETTE[62], 'Cotton'],
+        [MAPBIOMAS_PALETTE[41], 'Other Temporary Crops'],
+        [MAPBIOMAS_PALETTE[46], 'Coffee'],
+        [MAPBIOMAS_PALETTE[47], 'Citrus'],
+        [MAPBIOMAS_PALETTE[35], 'Oil Palm'],
+        [MAPBIOMAS_PALETTE[48], 'Other Perennial Crops'],
+        [MAPBIOMAS_PALETTE[9], 'Forest Plantation'],
+        [MAPBIOMAS_PALETTE[15], 'Pasture'],
+        [MAPBIOMAS_PALETTE[21], 'Mosaic of Uses'],
+        [MAPBIOMAS_PALETTE[22], 'Non-Vegetated Area'],
+        [MAPBIOMAS_PALETTE[23], 'Beach and Dune'],
+        [MAPBIOMAS_PALETTE[24], 'Urban Infrastructure'],
+        [MAPBIOMAS_PALETTE[30], 'Mining'],
+        [MAPBIOMAS_PALETTE[25], 'Other Non-Vegetated Areas'],
+        [MAPBIOMAS_PALETTE[33], 'Water'],
+        [MAPBIOMAS_PALETTE[31], 'Aquaculture'],
+        [MAPBIOMAS_PALETTE[69], 'Coral Reefs']
+    ]
+
+    # 3. Gerar o HTML
+    legend_html = """
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: start; 
+                background-color: #f8f9fb; padding: 15px; border-radius: 10px; 
+                border: 1px solid #ddd; margin-top: 20px;">
+    """
+
+    for color, label in legend_items:
+        legend_html += f"""
+        <div style="display: flex; align-items: center; background: #f0f2f6; 
+                    padding: 4px 8px; border-radius: 4px; min-width: 140px;">
+            <div style="width: 14px; height: 14px; background-color: {color}; 
+                        border: 1px solid #333; margin-right: 6px; border-radius: 2px;"></div>
+            <span style="font-size: 11px; color: #31333F; white-space: nowrap;">{label}</span>
+        </div>
+        """
+
+    legend_html += "</div>"
+
+    st.write("### Legend MapBiomas")
+    st.write("Land use and land cover map at 30-meter spatial resolution for the year 2024")
+    components.html(legend_html, height=200, scrolling=True)

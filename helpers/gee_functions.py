@@ -30,3 +30,12 @@ def get_sentinel_2_image(geometry: ee.geometry.Geometry, year: int):
     )
 
     return image
+
+
+def get_mapbiomas_image(year: int):
+    
+    asset = 'projects/mapbiomas-public/assets/brazil/lulc/collection10/mapbiomas_brazil_collection10_coverage_v2'
+
+    mapbiomas = ee.Image(asset).select(f'classification_{year}')
+
+    return mapbiomas
