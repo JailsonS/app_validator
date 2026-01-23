@@ -1,6 +1,6 @@
 import streamlit as st
 import ee
-import geemap
+import geemap.foliumap as geemap
 import os
 import json
 import streamlit.components.v1 as components
@@ -254,8 +254,9 @@ def show_facility():
 
     mapbiomas_lulc = get_mapbiomas_image(year=2024)
 
-    Map = geemap.Map(basemap=None, add_google_map=False)
-    
+    Map = geemap.Map(
+        add_google_map=False
+    )
 
     left_layer = geemap.ee_tile_layer(
         image,
