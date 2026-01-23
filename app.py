@@ -254,9 +254,7 @@ def show_facility():
 
     mapbiomas_lulc = get_mapbiomas_image(year=2024)
 
-    Map = geemap.Map(
-        add_google_map=False
-    )
+    Map = geemap.Map()
 
     left_layer = geemap.ee_tile_layer(
         image,
