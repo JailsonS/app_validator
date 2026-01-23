@@ -7,4 +7,5 @@ geemap==0.30.4
 folium>=0.15.1
 xyzservices>=2023.10.0
 python-box>=7.1.1
-earthengine-api>=0.1.392
+#earthengine-api>=0.1.392
+earthengine-api==0.1.392
