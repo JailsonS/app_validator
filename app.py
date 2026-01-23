@@ -234,6 +234,61 @@ def handle_save(choice, asset_samples):
     st.session_state.obs_field = ""
 
 
+
+# def show_facility():
+#     fc = st.session_state.samples_fc
+#     idx = st.session_state.current_index
+# 
+#     fac_id = st.session_state.facility_list[idx]
+#     facility = fc.filter(ee.Filter.eq('system:index', fac_id)).first()
+#     geom = facility.geometry()
+# 
+#     coord = geom.coordinates().getInfo()
+#     lon, lat = coord
+# 
+#     maps_url = f"https://www.google.com/maps?q={lat},{lon}"
+#     st.write(f"📍 [Coord: {lat}, {lon}]({maps_url})")
+# 
+#     image = get_sentinel_2_image(geom, year=2024).clip(
+#         geom.buffer(1000).bounds()
+#     )
+# 
+#     mapbiomas_lulc = get_mapbiomas_image(year=2024)
+# 
+#     Map = geemap.Map()
+# 
+#     left_layer = geemap.ee_tile_layer(
+#         image,
+#         {
+#             'bands': ['red', 'green', 'blue'],
+#             'min': 0,
+#             'max': 0.3,
+#             'gamma': 1.3
+#         },
+#         'Sentinel-2 RGB'
+#     )
+# 
+#     # Right: Google basemap
+#     # Satellite: Google Maps
+#     google_satellite_url = "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+#     Map.add_tile_layer(google_satellite_url, name="Google Satellite", attribution="Google", base_layer=True)
+# 
+#     # Split map
+#     Map.split_map(left_layer)
+# 
+#     # Add LULC layer
+#     Map.addLayer(mapbiomas_lulc, {
+#         'min': 0, 'max': 69,
+#         'palette': MAPBIOMAS_PALETTE
+#     }, 'LULC - 2024', True, 0.5)
+# 
+#     # Add facilities layer
+#     Map.addLayer(fc, {}, 'Facilities')
+#     Map.centerObject(facility, 16)
+# 
+#     # Display in Streamlit
+#     Map.to_streamlit(height=720)
+# 
 def show_facility():
     fc = st.session_state.samples_fc
     idx = st.session_state.current_index
@@ -242,11 +297,8 @@ def show_facility():
     facility = fc.filter(ee.Filter.eq('system:index', fac_id)).first()
     geom = facility.geometry()
 
-    coord = geom.coordinates().getInfo()
-    lon, lat = coord
-
-    maps_url = f"https://www.google.com/maps?q={lat},{lon}"
-    st.write(f"📍 [Coord: {lat}, {lon}]({maps_url})")
+    lon, lat = geom.coordinates().getInfo()
+    st.write(f"📍 Coord: {lat}, {lon}")
 
     image = get_sentinel_2_image(geom, year=2024).clip(
         geom.buffer(1000).bounds()
@@ -254,40 +306,61 @@ def show_facility():
 
     mapbiomas_lulc = get_mapbiomas_image(year=2024)
 
-    Map = geemap.Map()
+    zoom = 16
+    center = [lat, lon]
 
-    left_layer = geemap.ee_tile_layer(
-        image,
-        {
-            'bands': ['red', 'green', 'blue'],
-            'min': 0,
-            'max': 0.3,
-            'gamma': 1.3
-        },
-        'Sentinel-2 RGB'
-    )
+    # ─────────────────────────────
+    # Layout: dois mapas
+    # ─────────────────────────────
+    col1, col2 = st.columns(2)
 
-    # Right: Google basemap
-    # Satellite: Google Maps
-    google_satellite_url = "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-    Map.add_tile_layer(google_satellite_url, name="Google Satellite", attribution="Google", base_layer=True)
+    # ───────── MAPA ESQUERDO ─────────
+    with col1:
+        st.markdown("### 🛰️ Sentinel-2 RGB")
 
-    # Split map
-    Map.split_map(left_layer)
+        m1 = geemap.Map(location=center, zoom_start=zoom)
 
-    # Add LULC layer
-    Map.addLayer(mapbiomas_lulc, {
-        'min': 0, 'max': 69,
-        'palette': MAPBIOMAS_PALETTE
-    }, 'LULC - 2024', True, 0.5)
+        m1.addLayer(
+            image,
+            {
+                'bands': ['red', 'green', 'blue'],
+                'min': 0,
+                'max': 0.3,
+                'gamma': 1.3
+            },
+            'Sentinel-2 RGB'
+        )
 
-    # Add facilities layer
-    Map.addLayer(fc, {}, 'Facilities')
-    Map.centerObject(facility, 16)
+        m1.addLayer(
+            mapbiomas_lulc,
+            {
+                'min': 0,
+                'max': 69,
+                'palette': MAPBIOMAS_PALETTE
+            },
+            'LULC 2024',
+            True,
+            0.5
+        )
 
-    # Display in Streamlit
-    Map.to_streamlit(height=720)
+        m1.addLayer(fc, {}, 'Facilities')
+        m1.to_streamlit(height=600)
 
+    # ───────── MAPA DIREITO ─────────
+    with col2:
+        st.markdown("### 🌍 Google Satellite")
+
+        m2 = geemap.Map(location=center, zoom_start=zoom)
+
+        google_satellite = "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+        m2.add_tile_layer(
+            google_satellite,
+            name="Google Satellite",
+            attribution="Google"
+        )
+
+        m2.addLayer(fc, {}, 'Facilities')
+        m2.to_streamlit(height=600)
 # -------------------------------------------------------------------
 # Main UI
 # -------------------------------------------------------------------
