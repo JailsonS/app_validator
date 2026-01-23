@@ -1,6 +1,6 @@
 import streamlit as st
 import ee
-import geemap.foliumap as geemap
+import geemap
 import os
 import json
 import streamlit.components.v1 as components
