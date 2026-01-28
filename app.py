@@ -298,7 +298,8 @@ def show_facility():
     geom = facility.geometry()
 
     lon, lat = geom.coordinates().getInfo()
-    st.write(f"📍 Coord: {lat}, {lon}")
+    maps_url = f"https://www.google.com/maps?q={lat},{lon}"
+    st.write(f"📍 [Coord: {lat}, {lon}]({maps_url})")
 
     image = get_sentinel_2_image(geom, year=2024).clip(
         geom.buffer(1000).bounds()
